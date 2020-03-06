@@ -6,6 +6,23 @@ import {Consumer} from '../Context';
 export default class Node extends Component {
   constructor(props){
     super(props);
+    this.state={
+      color:''
+    }
+  }
+  componentDidMount(){
+    
+  }
+  setColor(p){
+    if(p=='X'){
+      this.setState({
+        color:'text-success'
+      });
+    }else if(p=='O'){
+      this.setState({
+        color:'text-primary'
+      });
+    }
   }
   render() {
     return (
@@ -14,20 +31,18 @@ export default class Node extends Component {
           const {currentPlayer,dispatch}=value;
           return(
             <span 
-              className="d-flex justify-content-center align-items-center"
+              className={`font-weight-bold d-flex justify-content-center align-items-center ${this.state.color} ${this.props.bgColor}`}
               style={{
-                width:"10vw" , 
-                height:"10vh",
+                width:"70px" , 
+                height:"70px",
                 float:'left',
-                border :'1px solid black',
-                cursor:'pointer',
+                border :'1px solid #d6d8d9',
+                cursor:'pointer'
               }}
               onClick={()=>{
-                
                 if(this.props.initVal!='')return;
-                dispatch({type:'CHANGE_PLAYER'});
+                this.setColor(currentPlayer);
                 dispatch({type:'KICK',id:this.props.id,player:currentPlayer});
-
               }}
             >
               {this.props.initVal}
@@ -40,6 +55,7 @@ export default class Node extends Component {
 }
 Node.propTypes={
   id:PropTypes.number.isRequired,
-  initVal:PropTypes.string.isRequired
+  initVal:PropTypes.string.isRequired,
+  bgColor:PropTypes.string.isRequired
 }
 

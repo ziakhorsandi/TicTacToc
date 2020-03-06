@@ -15,6 +15,7 @@ var config={
   devServer: {
     contentBase: SRC_DIR,
     compress: true,
+    historyApiFallback: true,
     port: 9000
   },
 

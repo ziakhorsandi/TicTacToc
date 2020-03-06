@@ -6,31 +6,47 @@ export class Provider extends Component {
   constructor(){
     super();
     this.state={
+      colorArr:[],
+      winner:'',
+      p1_result:[],
+      p2_result:[],
+      historyArr:[],
       statusArr:[],
       winArr:[],
       squareLen:3,
       currentPlayer:'X',
+      currentMove:0,
       dispatch: action =>{
         this.setState(this.reducer.bind(this,this.state,action))
       }
     }
-    this.calculateWinArray();
-    // this.initStatusArray();
-    
+    this.calculateWinArray=this.calculateWinArray.bind(this);
+    this.setResultArray=this.setResultArray.bind(this);
+    this.initStatusArray=this.initStatusArray.bind(this);
+    this.allInit=this.allInit.bind(this);
+    // this.calculateWinArray();
+    this.players={p1:'X',p2:'O'};
   }
-  initStatusArray(){
-    let len=this.state.squareLen;
+
+
+  //==========Initialize the status Array
+  initStatusArray(state){
+    let len=state.squareLen;
     let arr=[];
     for (let i = 0; i < len*len; i++){
       arr.push('');
     }
-    this.setState({
-      statusArr:arr
-    });
+    return{
+      ...state,
+      statusArr:Object.assign([],arr),
+      colorArr:Object.assign([],arr)
+    }
   }
-  calculateWinArray(){
-    let {winArr,statusArr}=this.state;
-    let len=this.state.squareLen;
+
+  //========Calculating winArray and results arrays
+  calculateWinArray(state){
+    let winAr=[];
+    let len=state.squareLen;
 
     // -------- create model Array (2 dimensional)
     let modelArr=[];
@@ -41,7 +57,7 @@ export class Provider extends Component {
     let k=0;
     for (let i = 0; i < len; i++) {
       for (let j = 0; j < len; j++) {
-        modelArr[i][j]={id:k , player:'X'};
+        modelArr[i][j]=k;
         k++;
       }
     }
@@ -53,57 +69,153 @@ export class Provider extends Component {
     for (let i = 0; i < len; i++) {
       for (let j = 0; j < len; j++) {
         if(i==j) {
-          subArr1.push({id:modelArr[i][j],player:null});
+          subArr1.push(modelArr[i][j]);
         }
         if(i+j==len-1){
-          subArr2.push({id:modelArr[i][j],player:null});
+          subArr2.push(modelArr[i][j]);
         }
-        subArrVer.push({id:modelArr[i][j],player:null});
-        subArrHor.push({id:modelArr[j][i],player:null});
-        subArrHor.push(
-          
-          modelArr[j][i].id
-        );
+        subArrVer.push(modelArr[i][j]);
+        subArrHor.push(modelArr[j][i]);
       }
-      winArr.push(subArrVer,subArrHor);
-      winArr.push(subArrHor);
+      winAr.push(subArrVer,subArrHor);
       subArrVer=[];
       subArrHor=[];
     }
-    winArr.push(subArr1,subArr2);
-
-    // console.log('modelArr : ',modelArr)
-    // console.log('statusArr : ',statusArr)
-  }
-
-  componentWillMount(){
+    winAr.push(subArr1,subArr2);
     
-    this.initStatusArray();
-    // console.log(this.state.statusArr);
-    // console.log(this.state.winArr);
-
-    // history:[
-    //   {movNum:1,p:'X',statusArr},
-    //   {movNum:2,p:'O',statusArr},
-    // ];
-
+    return{
+      ...state,
+      winArr:Object.assign([],winAr)
+    }
+  }
+ 
+  //========Set result array for each player
+  setResultArray(state){
+    let arr=[];
+    // console.log('this.state.winArr', this.state.winArr)
+    for (let i = 0; i < state.winArr.length; i++) {
+      arr.push(0);
+    }
+    return{
+      ...state,
+      p1_result:Object.assign([],arr),
+      p2_result:Object.assign([],arr)
+    };
   }
 
+  //=======All initialization
+  allInit(state){
+    state={
+      ...this.state,
+      colorArr:[],
+      winner:'',
+      p1_result:[],
+      p2_result:[],
+      historyArr:[],
+      statusArr:[],
+      winArr:[],
+      squareLen:3,
+      currentPlayer:'X',
+      currentMove:0
+    }
+    state={
+      ...this.initStatusArray(state)
+    }
+    state={
+      ...this.calculateWinArray(state)
+    }
+    state={
+      ...this.setResultArray(state)
+    }
+    return state;
+
+  }
+  ///////////-----------LifeCycle-------///////////
+  componentWillMount(){
+    this.setState(
+      this.allInit()
+    );
+  }
+  /////////////////////---------///////////////////
   reducer(state,action){
     switch (action.type) {
       case 'KICK':
+
+        if(state.winner!='') return;
+        //----------icrease move counter
+        state.currentMove=state.currentMove+1;
+        //------------set status array
         state.statusArr[action.id]=action.player
-        return state
-      case 'CHANGE_PLAYER':
-        if(state.currentPlayer=='X'){
-          state.currentPlayer="O";
-        }else{
-          state.currentPlayer="X";
+
+        //--------for result
+        let winRow=-1;
+
+        for (let i = 0; i < state.winArr.length; i++) {
+          for (let j = 0; j < state.squareLen; j++) {
+            if(action.id==state.winArr[i][j]){
+              if(state.currentPlayer==this.players.p1){
+                state.p1_result[i]++;
+                if(state.p1_result[i]==state.squareLen){
+                  state.winner=this.players.p1;
+                  winRow=i;
+                  break;
+                }
+              }
+              if(state.currentPlayer==this.players.p2){
+                state.p2_result[i]++;
+                if(state.p2_result[i]==state.squareLen){
+                  state.winner=this.players.p2;
+                  winRow=i;
+                  break;
+                }
+              }
+              
+            }
+          }
         }
+        //----set the colorArr for the winner
+        if(winRow!=-1){
+          for (let i = 0; i < state.winArr[winRow].length; i++) {
+            state.colorArr[state.winArr[winRow][i]]='bg-warning';
+          }
+        }
+        
+        //----------change the player
+        if(state.currentPlayer==this.players.p1){
+          state.currentPlayer=this.players.p2;
+        }else{
+          state.currentPlayer=this.players.p1;
+        }
+        //----------set history array
+        state.historyArr.push({
+          moveNum:state.currentMove,
+          p:state.currentPlayer,
+          stArr:Object.assign([], state.statusArr),
+          p1:Object.assign([], state.p1_result),
+          p2:Object.assign([], state.p2_result)
+        });
+        
+        if(state.winner!=''){
+          state.historyArr=[];
+        };
         return state
-      case 'CHANGE_H':
-        state.statusArr=['v','v','v','v','v','v','v','v','v'];
+      case 'HIS_BACK':
+          
+          state.statusArr=Object.assign([], state.historyArr[action.move-1].stArr);
+          state.p1_result=Object.assign([], state.historyArr[action.move-1].p1);
+          state.p2_result=Object.assign([], state.historyArr[action.move-1].p2);
+          state.currentPlayer=state.historyArr[action.move-1].p;
+
+          state.currentMove=action.move;
+          let popTimes=state.historyArr.length-action.move;
+          
+          for (let i = 0; i <popTimes ; i++) {
+            state.historyArr.pop();
+          }
+          
         return state
+      case 'RESET':
+        return this.allInit();
       default:
         return(state);
     }

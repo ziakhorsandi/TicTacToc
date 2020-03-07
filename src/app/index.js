@@ -12,7 +12,7 @@ class App extends React.Component {
   render() {
     return (
       <Provider>
-        <Router>
+        <Router basename={process.env.PUBLIC_URL}>
           <main>
             <Switch>
               <Route exact path="/" component={Initial} />

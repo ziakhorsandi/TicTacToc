@@ -1,9 +1,11 @@
 {
-  "name": "reactPackage",
+  "name": "TicTacToc",
   "version": "1.0.0",
   "description": "",
+  "homepage" :"https://ziakhorsandi.github.io/TicTacToc",
   "main": "index.js",
   "scripts": {
+    "deploy":"npm run build&&gh-pages -d build",
     "start": "npm run build",
     "build": "webpack -d  && webpack-dev-server --inline --hot",
     "builds": "webpack -d && cp src/index.html dist/index.html && webpack-dev-server --content-base src/ --inline --hot",

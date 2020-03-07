@@ -2,19 +2,21 @@
   "name": "TicTacToc",
   "version": "1.0.0",
   "description": "",
-  "homepage" :"https://ziakhorsandi.github.io/TicTacToc",
+  "homepage": "https://ziakhorsandi.github.io/TicTacToc",
   "main": "index.js",
   "scripts": {
-    "deploy":"npm run build&&gh-pages -d build",
+    "deploy": "gh-pages -d dist",
     "start": "npm run build",
     "build": "webpack -d  && webpack-dev-server --inline --hot",
     "builds": "webpack -d && cp src/index.html dist/index.html && webpack-dev-server --content-base src/ --inline --hot",
-    "build-prod": "webpack -p && cp src/index.html dist/index.html"
+    "build-prod": "webpack -p",
+    "build-prods": "webpack -p && cp src/index.html dist/index.html"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "gh-pages": "^2.2.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2"

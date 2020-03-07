@@ -60,7 +60,7 @@ export default class Board extends Component {
                   <button 
                     className="btn btn-warning"
                     onClick={()=>dispatch({type:'RESET'})}
-                  >
+                    >
                     Reset
                   </button>
                   {historyArr.map(btn=>(
@@ -74,7 +74,7 @@ export default class Board extends Component {
                   <button 
                     className="btn btn-info"
                     onClick={()=>this.props.history.push('/')}
-                  >
+                    >
                     Back To Menu
                   </button>
                 </div>

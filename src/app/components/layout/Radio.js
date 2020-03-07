@@ -1,16 +1,22 @@
-import React from 'react'
+import React, { Component } from 'react'
 
-export default function Radio(props) {
-  return (
-    <div className="custom-control custom-radio ">
-      <input 
-        value={props.value}
-        type="radio" 
-        id={props.id} 
-        name="customRadio" 
-        className="custom-control-input"
-      />
-      <label className="custom-control-label" htmlFor={props.id}>{props.val}</label>
-    </div>
-  )
+export default class Radio extends Component {
+  render() {
+    return (
+      <div className="custom-control custom-radio ">
+        <input 
+          value={this.props.value}
+          type="radio" 
+          id={this.props.id} 
+          name="customRadio" 
+          className="custom-control-input"
+          onChange={(e)=>{
+            this.props.changeLen(e.target.value);
+          }}
+        />
+        <label className="custom-control-label" htmlFor={this.props.id}>{this.props.val}</label>
+      </div>
+    )
+  }
 }
+

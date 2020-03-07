@@ -13,7 +13,7 @@ export class Provider extends Component {
       historyArr:[],
       statusArr:[],
       winArr:[],
-      squareLen:3,
+      squareLen:5,
       currentPlayer:'X',
       currentMove:0,
       dispatch: action =>{
@@ -104,8 +104,8 @@ export class Provider extends Component {
   }
 
   //=======All initialization
-  allInit(state){
-    state={
+  allInit(len){
+    let state={
       ...this.state,
       colorArr:[],
       winner:'',
@@ -114,7 +114,7 @@ export class Provider extends Component {
       historyArr:[],
       statusArr:[],
       winArr:[],
-      squareLen:3,
+      squareLen:len,
       currentPlayer:'X',
       currentMove:0
     }
@@ -133,7 +133,7 @@ export class Provider extends Component {
   ///////////-----------LifeCycle-------///////////
   componentWillMount(){
     this.setState(
-      this.allInit()
+      this.allInit(this.state.squareLen)
     );
   }
   /////////////////////---------///////////////////
@@ -215,7 +215,9 @@ export class Provider extends Component {
           
         return state
       case 'RESET':
-        return this.allInit();
+        return this.allInit(state.squareLen);
+      case 'START':
+        return this.allInit(action.len);
       default:
         return(state);
     }
